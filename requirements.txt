@@ -1,3 +1,7 @@
 keras
 board_to_fen
 tensorflow
+keyboard
+pyautogui
+stockfish
+chess
