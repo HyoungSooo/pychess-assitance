@@ -53,6 +53,7 @@ class Position:
                 self.left_x, self.left_y, self.right_x, self.right_y))
             image = Image.open(self.filepath + f'/{self.counter}.png')
             output = BytesIO()
+            image = image.resize((400, 400))
             image.convert("RGB").save(output, "BMP")
             output.close()
             self.counter += 1

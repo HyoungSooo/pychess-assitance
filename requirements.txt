@@ -5,3 +5,6 @@ keyboard
 pyautogui
 stockfish
 chess
+torch
+torchvision
+matplotlib

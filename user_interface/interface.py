@@ -1,19 +1,21 @@
 from position import Position
 import tkinter
-from utils import get_fen_from_image_path
+from utils import predict
 from stockfish import Stockfish
 import chess
+import time
+import torch
 
 board = chess.Board()
 
 sf = Stockfish(
     path='C:/Users/aaa57/pychess-assitance/user_interface/stockfish/stockfish-windows-x86-64-avx2.exe')
-
+best_model = torch.jit.load('user_interface/best_model_cpu_scripted.pt')
 GAMETURN = chess.WHITE
 
 position = Position('image')
 
-CAPTUER_INTERVAL = 20000  # ms
+CAPTUER_INTERVAL = 2000  # ms
 capture_after_id = None
 
 
@@ -64,15 +66,20 @@ def capture():
         capture_after_id = window.after(CAPTUER_INTERVAL, capture)
 
         capture_text.config(text=f'{position.counter-1} captured')
-        fen = get_fen_from_image_path(
-            f'{position.filepath}/{position.counter-1}.png')
+
+        fen = predict(
+            f'{position.filepath}/{position.counter-1}.png', model=best_model)
+        if not GAMETURN:
+            fen = fen[::-1]
         board = chess.Board()
         board.set_fen(fen=fen)
         board.turn = GAMETURN
         fen_text.config(text=board.fen())
         try:
+            sf_label.config(text='')
             sf.set_fen_position(board.fen())
-            sf_label.config(text=sf.get_best_move())
+            move = sf.get_top_moves(1)
+            sf_label.config(text=move)
         except:
             pass
     except ValueError as e:
