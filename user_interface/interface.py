@@ -15,7 +15,7 @@ GAMETURN = chess.WHITE
 
 position = Position('image')
 
-CAPTUER_INTERVAL = 2000  # ms
+CAPTUER_INTERVAL = 5000  # ms
 capture_after_id = None
 
 
@@ -63,7 +63,6 @@ def capture():
     global position, capture_after_id, sf
     try:
         position.capture()
-        capture_after_id = window.after(CAPTUER_INTERVAL, capture)
 
         capture_text.config(text=f'{position.counter-1} captured')
 
@@ -75,13 +74,15 @@ def capture():
         board.set_fen(fen=fen)
         board.turn = GAMETURN
         fen_text.config(text=board.fen())
-        try:
-            sf_label.config(text='')
+        sf_label_move.config(text=board.fen())
+
+        sf_label.config(text='')
+        if sf.is_fen_valid(board.fen()):
             sf.set_fen_position(board.fen())
-            move = sf.get_top_moves(1)
-            sf_label.config(text=move)
-        except:
-            pass
+            move = sf.get_evaluation()
+            sf_label_move.config(text=sf.get_best_move())
+        sf_label.config(text=move)
+
     except ValueError as e:
         capture_text.config(
             text=f'{str(e)}')
@@ -143,6 +144,11 @@ sf_label = tkinter.Label(window, width=100, height=1,
                          fg="black", relief="raised")
 
 sf_label.pack()
+
+sf_label_move = tkinter.Label(window, width=100, height=1,
+                              fg="black", relief="raised")
+
+sf_label_move.pack()
 
 left_button = tkinter.Button(window, overrelief="solid", width=15,
                              command=left_pos, repeatdelay=1000, repeatinterval=100, text='left_position')
