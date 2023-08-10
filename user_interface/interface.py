@@ -81,7 +81,7 @@ def capture():
             sf.set_fen_position(board.fen())
             move = sf.get_evaluation()
             sf_label_move.config(text=sf.get_best_move())
-        sf_label.config(text=move)
+            sf_label.config(text=move)
 
     except ValueError as e:
         capture_text.config(
